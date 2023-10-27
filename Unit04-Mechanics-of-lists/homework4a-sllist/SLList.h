@@ -10,31 +10,66 @@ public:
         Node(T v) : next(nullptr), value(v) {}
     };
 
-    SLList() {}
+    Node* head;
 
-    ~SLList() {}
+    SLList() : head(nullptr) {}
+
+    ~SLList() {
+        clear();
+    }
 
     const Node* get_head() const {
-        // implement get_head here
+        return head;
     }
 
     void push_back(T item) {
-        // implement push_back here
+        Node* newNode = new Node(item);
+        if (!head) {
+            head = newNode;
+        } else {
+            Node* current = head;
+            while (current->next) {
+                current = current->next;
+            }
+            current->next = newNode;
+        }
     }
 
     void pop_back() {
-        // implement pop_back here
+        if (!head) {
+            return; // List is empty, nothing to pop
+        } else if (!head->next) {
+            delete head;
+            head = nullptr;
+        } else {
+            Node* current = head;
+            while (current->next->next) {
+                current = current->next;
+            }
+            delete current->next;
+            current->next = nullptr;
+        }
     }
 
     const T& front() const {
-        // implement front here
+        return head->value;
     }
 
     int size() const {
-        // implement size here
+        int count = 0;
+        Node* current = head;
+        while (current) {
+            count++;
+            current = current->next;
+        }
+        return count;
     }
 
     void clear() {
-        // implement clear here
+        while (head) {
+            Node* temp = head;
+            head = head->next;
+            delete temp;
+        }
     }
 };

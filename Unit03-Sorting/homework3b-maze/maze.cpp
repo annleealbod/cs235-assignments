@@ -3,8 +3,8 @@
 #include <vector>
 #include "Grid.h"
 
-// Function to solve the maze using Depth-First Search
-bool solveMaze(Grid& maze, int row, int column, int level) {
+// Modify the solveMaze function to accept the output file as a parameter
+bool solveMaze(Grid& maze, int row, int column, int level, std::ofstream& solutionFile) {
     // Check if we have reached the end of the maze
     if (row == maze.height() - 1 && column == maze.width() - 1 && level == maze.depth() - 1) {
         return true;  // Found a solution
@@ -42,9 +42,9 @@ bool solveMaze(Grid& maze, int row, int column, int level) {
             }
 
             // Recursively explore the new move
-            if (solveMaze(maze, newRow, newColumn, newLevel)) {
-                // If a solution is found, print the current coordinates
-                std::cout << row << " " << column << " " << level << std::endl;
+            if (solveMaze(maze, newRow, newColumn, newLevel, solutionFile)) {
+                // If a solution is found, write the current coordinates to the output file
+                solutionFile << row << " " << column << " " << level << std::endl;
                 return true;
             }
         }
@@ -74,18 +74,14 @@ int main(int argc, char* argv[]) {
     mazeFile.close();
 
     // Check if the maze is solvable
-    if (solveMaze(maze, 0, 0, 0)) {
-        std::ofstream solutionFile(argv[2]);
-        solutionFile << "SOLUTION" << std::endl;
-        solutionFile << "0 0 0" << std::endl; // Add this line
-        solveMaze(maze, 0, 0, 0); // This line generates the solution path
-        solutionFile.close();
+    std::ofstream solutionFile(argv[2]);
+    if (solveMaze(maze, 0, 0, 0, solutionFile)) {
+        solutionFile << "SOLUTION" << std::endl; // Write "SOLUTION" at the beginning
+        solveMaze(maze, 0, 0, 0, solutionFile); // Continue to generate the solution path
     } else {
-        std::ofstream solutionFile(argv[2]);
         solutionFile << "NO SOLUTION" << std::endl;
-        solutionFile.close();
     }
-
+    solutionFile.close();
 
     return 0;
 }
